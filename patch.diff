@@ -1,0 +1,58 @@
+--- original_helper.php	2015-08-31 14:06:55.519488374 +0000
++++ helper.php	2015-08-31 13:33:27.675189647 +0000
+@@ -27,6 +27,7 @@
+ require_once($CFG->dirroot . '/cache/lib.php');
+ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
++require_once($CFG->dirroot . '/admin/tool/uploadcoursecategory/classes/category.php');
+ 
+ /**
+  * Class containing a set of helpers.
+@@ -443,12 +444,13 @@
+      * @return int category ID.
+      */
+     public static function resolve_category_by_path(array $path) {
+-        global $DB;
++        global $DB, $CFG;
+         $cache = cache::make('tool_uploadcourse', 'helper');
+         $cachekey = 'cat_path_' . serialize($path);
+         if (($id = $cache->get($cachekey)) === false) {
+             $parent = 0;
+             $sql = 'name = :name AND parent = :parent';
++            $originalpath = $path;
+             while ($name = array_shift($path)) {
+                 $params = array('name' => $name, 'parent' => $parent);
+                 if ($records = $DB->get_records_select('course_categories', $sql, $params, null, 'id, parent')) {
+@@ -461,9 +463,29 @@
+                     $id = $record->id;
+                     $parent = $record->id;
+                 } else {
+-                    // Not found.
+-                    $id = -1;
+-                    break;
++                    // tool_uploadcoursecategory uses '/' (no spaces) as delimiter
++                    $newcategoryname = implode('/', $originalpath);
++                    $newdata = array('name' => $newcategoryname);
++                    $newcat = new tool_uploadcoursecategory_category(
++                        tool_uploadcoursecategory_processor::MODE_CREATE_NEW,
++                        tool_uploadcoursecategory_processor::UPDATE_NOTHING,
++                        $newdata, array('createmissing' => true)
++                    );
++
++                    if ($newcat->prepare()) {
++                        $newcat->proceed();
++                        $errors = $newcat->get_errors();
++                        if (empty($errors)) {
++                            $id = $newcat->get_id();
++                            $cache->set($cachekey, $id);
++                            break;
++                        } else {
++                            $id = -1;
++                        }
++                    } else {
++                        $id = -1;
++                        break;
++                    }
+                 }
+             }
+             $cache->set($cachekey, $id);
