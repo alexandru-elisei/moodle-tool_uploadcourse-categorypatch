@@ -3,7 +3,7 @@
 #### Description
 This is a patch for Moodle plugin tool_uploadcourse to automatically create categories when a course is uploaded and the categories from the category_path field are missing.
 
-#### Installatino
+#### Installation
 This plugin requires my forked version of uploadcoursecategory [tool_uploadcoursecategory](https://github.com/alexandru-elisei/moodle-tool_uploadcoursecategory), to which I've added a cli script for creating course categories.
 
 This plugin has been tested to work with Moodle 2.9. There are no guarantess it will work with earlier versions.
