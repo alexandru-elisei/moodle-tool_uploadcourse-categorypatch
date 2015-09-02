@@ -4,13 +4,15 @@
 This is a patch for Moodle plugin tool_uploadcourse to automatically create categories when a course is uploaded and the categories from the category_path field are missing.
 
 #### Installation
-This plugin requires my forked version of uploadcoursecategory [tool_uploadcoursecategory](https://github.com/alexandru-elisei/moodle-tool_uploadcoursecategory), to which I've added a cli script for creating course categories.
+This plugin requires the forked version of uploadcoursecategory [tool_uploadcoursecategory](https://github.com/alexandru-elisei/moodle-tool_uploadcoursecategory), to which a cli script for creating course categories has been added.
 
 This plugin has been tested to work with Moodle 2.9. There are no guarantess it will work with earlier versions.
 
-The basic process involves cloning the repository into MOODLE_ROOT_DIRECTORY/admin/tool/uploadcourse/classes:
+The basic process involves cloning the repository, then moving the patch.diff file to MOODLE_ROOT_DIRECTORY/admin/tool/uploadcourse/classes:
 
-    git clone https://github.com/alexandru-elisei/moodle-tool_uploadcourse-categorypatch.git MOODLE_ROOT_DIRECTORY/admin/tool/uploadcourse/classes
+    git clone https://github.com/alexandru-elisei/moodle-tool_uploadcourse-categorypatch.git # this will create the directory $(pwd)/moodle-tool_uploadcourse-categorypatch
+    
+    mv "$(pwd)/moodle-tool_uploadcourse-categorypatch/patch.diff" MOODLE_ROOT_DIRECTORY/admin/tool/uploadcourse/classes
 
 replacing MOODLE_ROOT_DIRECTORY with the actual moodle installation root directory path. In the MOODLE_ROOT_DIRECTORY/admin/tool/uploadcourse/classes apply the patch:
 
@@ -18,7 +20,7 @@ replacing MOODLE_ROOT_DIRECTORY with the actual moodle installation root directo
 
 As an alternative, you can also download the zip file and extract it to the same location, then apply the patch as above.
 
-If you are cloning the git repository, keep in mind that this also creates a .git directory.
+If you are cloning the git repository, keep in mind that followind the instructions will create the moodle-tool_uploadcourse-categorypatch directory.
 
 #### Usage
 When uploading courses from a csv file (from Site administration -> Courses -> Upload courses), the categories specified in the field category_path will be automatically created if they do not exist.
